@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Terjemahan</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input, button { padding: 10px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Game Terjemahan</h1>
+    <div id="word">Kata: makan</div>
+    <input type="text" id="answer" placeholder="Masukkan bahasa Inggris...">
+    <button onclick="submitAnswer()">Submit</button>
+    <div id="message"></div>
+    <script>
+        async function getWord() {
+            const res = await fetch('/api/getWord');
+            const data = await res.json();
+            document.getElementById('word').innerText = `Kata: ${data.word}`;
+        }
+
+        async function submitAnswer() {
+            const answer = document.getElementById('answer').value;
+            const res = await fetch('/api/checkAnswer', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ answer })
+            });
+            const data = await res.json();
+            document.getElementById('message').innerText = data.message;
+            if (data.correct) getWord();
+        }
+
+        getWord();
+    </script>
+</body>
+</html>
